@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mi Niña Hermosa</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400;1,600&family=Lora:ital,wght@0,400;0,500;1,400;1,500&family=Dancing+Script:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#09060a;
+  --rose:#c25470;--rose2:#e0809a;--rose3:#7a2d45;
+  --gold:#c9a55e;--gold2:#7a6030;
+  --cream:#f0e0cc;--text:#d0b8a8;--dim:#7a6054;
+  --border:rgba(194,84,112,0.2);
+}
+html{scroll-behavior:smooth}
+body{background:var(--bg);color:var(--text);font-family:'Lora',serif;min-height:100vh;overflow-x:hidden}
+canvas#stars{position:fixed;inset:0;z-index:0;pointer-events:none}
+
+.page{position:relative;z-index:2;max-width:960px;margin:0 auto;padding:0 20px 80px}
+
+/* ── HERO ── */
+.hero{text-align:center;padding:88px 0 60px}
+.hero-vline{width:1px;height:64px;background:linear-gradient(to bottom,transparent,var(--rose));margin:0 auto 30px}
+.eyebrow{font-family:'Lora',serif;font-style:italic;font-size:14px;color:var(--gold);margin-bottom:20px;opacity:0;animation:fu 1s .2s forwards;letter-spacing:1px}
+.hero h1{
+  font-family:'Dancing Script',cursive;
+  font-size:clamp(60px,13vw,108px);
+  font-weight:600;
+  line-height:1;
+  color:var(--cream);
+  text-shadow:0 0 70px rgba(194,84,112,.35);
+  opacity:0;animation:fu 1s .5s forwards;
+  margin-bottom:8px
+}
+.hero h1 span{display:block;color:var(--rose2);font-size:.72em}
+.hero-sub{
+  font-family:'Lora',serif;font-style:italic;
+  font-size:clamp(15px,2.2vw,18px);
+  color:var(--dim);line-height:2;
+  max-width:480px;margin:26px auto 0;
+  opacity:0;animation:fu 1s .8s forwards
+}
+.hero-sub em{color:var(--rose2);font-style:normal}
+.divrow{display:flex;align-items:center;gap:14px;margin-top:38px;opacity:0;animation:fu 1s 1s forwards}
+.divline{flex:1;height:1px;background:linear-gradient(to right,transparent,var(--border),transparent)}
+.divsym{color:var(--rose3);font-size:15px}
+@keyframes fu{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── SECTION ── */
+.sec{margin-top:64px;opacity:0;transform:translateY(22px);transition:opacity .7s,transform .7s}
+.sec.vis{opacity:1;transform:none}
+.sec-label{font-family:'Lora',serif;font-style:italic;font-size:13px;color:var(--gold2);margin-bottom:8px;letter-spacing:1px}
+.sec-title{font-family:'Dancing Script',cursive;font-size:clamp(28px,4vw,38px);font-weight:600;color:var(--cream);margin-bottom:6px}
+.sec-desc{font-family:'Lora',serif;font-style:italic;font-size:13px;color:var(--dim);line-height:1.7;margin-bottom:22px}
+
+/* ── CHOICE CARDS ── */
+.choice-row{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+@media(max-width:580px){.choice-row{grid-template-columns:1fr}}
+
+.choice-card{
+  background:linear-gradient(145deg,#1c0e16,#0f090d);
+  border:1px solid var(--border);border-radius:4px;
+  padding:40px 24px;text-align:center;
+  cursor:pointer;position:relative;overflow:hidden;
+  transition:border-color .3s,transform .25s,box-shadow .3s;
+}
+.choice-card:hover{
+  border-color:rgba(194,84,112,.55);
+  transform:translateY(-5px);
+  box-shadow:0 14px 44px rgba(194,84,112,.12)
+}
+.choice-card::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse at 50% 0%,rgba(194,84,112,.07),transparent 65%);
+  pointer-events:none
+}
+.cc{position:absolute;width:18px;height:18px;border-color:var(--rose3);border-style:solid;opacity:.4}
+.cc.tl{top:8px;left:8px;border-width:1px 0 0 1px}
+.cc.tr{top:8px;right:8px;border-width:1px 1px 0 0}
+.cc.bl{bottom:8px;left:8px;border-width:0 0 1px 1px}
+.cc.br{bottom:8px;right:8px;border-width:0 1px 1px 0}
+
+.choice-icon{font-size:40px;display:block;margin-bottom:16px;filter:drop-shadow(0 0 10px rgba(194,84,112,.5));animation:pulse 3s ease-in-out infinite}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
+.choice-title{font-family:'Dancing Script',cursive;font-size:28px;font-weight:600;color:var(--cream);margin-bottom:10px}
+.choice-sub{font-family:'Lora',serif;font-style:italic;font-size:13px;color:var(--dim);line-height:1.7}
+.choice-badge{
+  display:inline-block;margin-top:16px;
+  padding:6px 16px;border:1px solid var(--rose3);border-radius:2px;
+  font-family:'Lora',serif;font-style:italic;font-size:12px;color:var(--rose2);
+  transition:all .2s
+}
+.choice-card:hover .choice-badge{background:rgba(194,84,112,.12);border-color:var(--rose)}
+
+/* ── MODAL OVERLAY ── */
+.modal-overlay{
+  display:none;position:fixed;inset:0;z-index:50;
+  background:rgba(6,3,8,.93);
+  align-items:flex-start;justify-content:center;
+  padding:24px 16px;overflow-y:auto;
+  backdrop-filter:blur(5px)
+}
+.modal-overlay.open{display:flex}
+.modal-box{
+  background:linear-gradient(160deg,#1c0e16,#0f090d);
+  border:1px solid var(--border);border-radius:4px;
+  width:100%;max-width:700px;
+  padding:36px 30px;position:relative;
+  margin:auto;
+  animation:slideIn .4s cubic-bezier(.34,1.56,.64,1);
+  overflow-x:auto
+}
+@media(max-width:600px){
+  .modal-box{padding:36px 14px}
+  .modal-overlay{padding:16px 8px}
+}
+@keyframes slideIn{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:translateY(0)}}
+.modal-box::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at top left,rgba(194,84,112,.06),transparent 55%);pointer-events:none;border-radius:4px}
+
+.modal-close{
+  position:absolute;top:14px;right:14px;
+  background:transparent;border:1px solid var(--rose3);
+  color:var(--rose2);width:30px;height:30px;border-radius:2px;
+  cursor:pointer;font-size:14px;transition:all .2s;
+  display:flex;align-items:center;justify-content:center;font-family:'Lora',serif
+}
+.modal-close:hover{background:rgba(194,84,112,.15);border-color:var(--rose)}
+.modal-title{font-family:'Dancing Script',cursive;font-size:32px;font-weight:600;color:var(--cream);margin-bottom:4px}
+.modal-desc{font-family:'Lora',serif;font-style:italic;font-size:13px;color:var(--dim);margin-bottom:20px}
+
+/* ── PROGRESS ── */
+.prog-row{display:flex;gap:8px;align-items:center;margin-bottom:18px}
+.prog-bar{flex:1;height:1px;background:rgba(255,255,255,.05)}
+.prog-fill{height:100%;background:linear-gradient(to right,var(--rose3),var(--rose));width:0%;transition:width .5s}
+.prog-txt{font-family:'Lora',serif;font-style:italic;font-size:12px;color:var(--dim);white-space:nowrap}
+
+/* ── WORD SEARCH ── */
+.ws-grid-wrap{display:grid;gap:2px;width:fit-content;max-width:100%;margin:0 auto 16px;overflow-x:hidden}
+.ws-row-g{display:flex;gap:2px}
+.ws-cell{
+  width:clamp(20px,5.5vw,28px);height:clamp(20px,5.5vw,28px);display:flex;align-items:center;justify-content:center;
+  font-family:'Lora',serif;font-size:clamp(9px,2.2vw,12px);font-weight:500;color:var(--dim);
+  cursor:pointer;border-radius:2px;border:1px solid transparent;
+  transition:all .12s;user-select:none
+}
+.ws-cell:hover{border-color:var(--rose3);color:var(--text)}
+.ws-cell.sel{background:rgba(194,84,112,.22);color:var(--rose2);border-color:var(--rose3)}
+.ws-cell.f0{background:rgba(194,84,112,.3);color:var(--cream);border-color:var(--rose)}
+.ws-cell.f1{background:rgba(201,165,94,.22);color:var(--gold);border-color:var(--gold2)}
+.ws-cell.f2{background:rgba(100,70,160,.25);color:#c4a0e8;border-color:#6040a8}
+.ws-cell.f3{background:rgba(60,140,120,.22);color:#70c8b8;border-color:#308870}
+.ws-cell.f4{background:rgba(180,100,50,.25);color:#e09060;border-color:#905020}
+.ws-cell.f5{background:rgba(60,100,180,.25);color:#80a8e8;border-color:#304890}
+.ws-cell.f6{background:rgba(160,60,120,.25);color:#d888b8;border-color:#803060}
+.ws-cell.f7{background:rgba(100,150,60,.22);color:#a0c868;border-color:#508030}
+.ws-cell.f8{background:rgba(160,120,40,.25);color:#d8b060;border-color:#806020}
+.ws-cell.f9{background:rgba(80,140,160,.22);color:#70c0d0;border-color:#307888}
+.ws-words-wrap{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.ws-word-chip{font-family:'Lora',serif;font-style:italic;font-size:12px;padding:3px 10px;border:1px solid var(--border);border-radius:2px;color:var(--dim);transition:all .3s}
+.ws-word-chip.found{color:var(--rose2);border-color:var(--rose3);text-decoration:line-through;opacity:.55}
+
+/* ── CROSSWORD ── */
+.cw-wrap{display:grid;gap:2px;width:fit-content;max-width:100%;margin:0 auto 16px;overflow-x:auto}
+.cw-row-g{display:flex;gap:2px}
+.cw-cell{width:28px;height:28px;position:relative}
+.cw-cell.blk{background:rgba(0,0,0,.6);border-radius:2px}
+.cw-cell input{
+  width:100%;height:100%;background:rgba(240,224,204,.05);
+  border:1px solid var(--border);border-radius:2px;
+  color:var(--cream);font-family:'Lora',serif;font-size:13px;font-weight:500;
+  text-align:center;text-transform:uppercase;outline:none;transition:all .15s;caret-color:var(--rose)
+}
+.cw-cell input:focus{background:rgba(194,84,112,.1);border-color:var(--rose)}
+.cw-cell input.ok{background:rgba(194,84,112,.22);border-color:var(--rose);color:var(--rose2)}
+.cw-cell input.no{background:rgba(160,40,50,.18);border-color:#903040;color:#e07080}
+.cw-num{position:absolute;top:2px;left:2px;font-size:6.5px;color:var(--gold2);line-height:1;pointer-events:none}
+.cw-clues{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:16px}
+@media(max-width:500px){.cw-clues{grid-template-columns:1fr}}
+.clue-group-title{font-family:'Dancing Script',cursive;font-size:18px;font-weight:600;color:var(--gold);margin-bottom:8px}
+.clue-item{font-family:'Lora',serif;font-style:italic;font-size:12px;color:var(--dim);line-height:1.6;margin-bottom:6px;cursor:pointer;transition:color .2s}
+.clue-item:hover{color:var(--rose2)}
+.clue-item.solved{color:var(--rose3);text-decoration:line-through}
+.clue-item b{font-family:'Lora',serif;font-style:normal;font-weight:500;color:var(--gold2);margin-right:3px;font-size:10px}
+
+/* ── BUTTON ── */
+.btn{
+  display:inline-flex;align-items:center;gap:7px;
+  padding:9px 22px;border:1px solid var(--rose3);background:transparent;
+  color:var(--rose2);font-family:'Lora',serif;font-style:italic;font-size:13px;
+  cursor:pointer;border-radius:2px;transition:all .2s;margin-top:14px
+}
+.btn:hover{background:rgba(194,84,112,.12);border-color:var(--rose);color:var(--cream)}
+
+/* ── FINALE ── */
+.finale{
+  margin-top:88px;text-align:center;
+  padding:64px 32px 80px;
+  background:linear-gradient(180deg,transparent,rgba(194,84,112,.04) 25%,rgba(194,84,112,.08) 50%,rgba(194,84,112,.04) 75%,transparent)
+}
+.finale::before,.finale::after{
+  content:'✦  ✦  ✦';display:block;
+  color:var(--rose3);font-size:13px;letter-spacing:10px;margin-bottom:36px;opacity:.4
+}
+.finale::after{margin-top:36px;margin-bottom:0}
+.heart-ani{font-size:30px;display:block;animation:hb 2.2s ease-in-out infinite;margin-bottom:28px;filter:drop-shadow(0 0 12px rgba(194,84,112,.75))}
+@keyframes hb{0%,100%{transform:scale(1)}30%{transform:scale(1.14)}60%{transform:scale(1.04)}}
+.finale-line{width:100px;height:1px;background:linear-gradient(to right,transparent,var(--rose3),transparent);margin:0 auto 38px}
+.finale-msg{
+  font-family:'Lora',serif;font-style:italic;
+  font-size:clamp(15px,2.3vw,18px);line-height:2.2;
+  color:var(--text);max-width:540px;margin:0 auto
+}
+.finale-msg em{color:var(--rose2);font-style:normal}
+.finale-sig{
+  margin-top:52px;
+  font-family:'Dancing Script',cursive;
+  font-size:clamp(32px,6vw,52px);
+  font-weight:600;
+  color:var(--cream);
+  text-shadow:0 0 30px rgba(194,84,112,.35);
+  line-height:1.4
+}
+.finale-sig small{
+  display:block;
+  font-family:'Lora',serif;font-style:italic;font-size:14px;
+  color:var(--dim);margin-bottom:10px;font-weight:400
+}
+
+/* ── TOAST ── */
+#toast{
+  position:fixed;top:24px;left:50%;transform:translateX(-50%) translateY(-90px);
+  background:linear-gradient(135deg,#1e0d14,#130810);border:1px solid var(--rose);
+  padding:12px 26px;border-radius:2px;
+  font-family:'Lora',serif;font-style:italic;font-size:15px;color:var(--rose2);
+  z-index:99;transition:transform .45s cubic-bezier(.34,1.56,.64,1);white-space:nowrap
+}
+#toast.show{transform:translateX(-50%) translateY(0)}
+
+/* ── LOVE MODAL ── */
+.love-msg-wrap{display:flex;flex-direction:column;align-items:center;gap:10px}
+.love-te-amo{
+  font-family:'Dancing Script',cursive;
+  font-size:clamp(44px,11vw,80px);
+  font-weight:700;
+  color:var(--rose2);
+  text-shadow:0 0 40px rgba(194,84,112,.6),0 0 80px rgba(194,84,112,.3);
+  animation:teamo-pulse 1.8s ease-in-out infinite;
+  line-height:1.1;
+}
+@keyframes teamo-pulse{
+  0%,100%{transform:scale(1);text-shadow:0 0 40px rgba(194,84,112,.6)}
+  50%{transform:scale(1.06);text-shadow:0 0 70px rgba(194,84,112,.9),0 0 120px rgba(194,84,112,.4)}
+}
+.love-hearts{font-size:22px;color:var(--rose);letter-spacing:8px;animation:hb 2.2s ease-in-out infinite}
+.snoopy-svg{width:160px;height:auto;filter:drop-shadow(0 4px 20px rgba(194,84,112,.3));margin-top:4px}
+.love-sub{font-family:'Lora',serif;font-style:italic;font-size:14px;color:var(--dim);margin-top:4px}
+</style>
+</head>
+<body>
+
+<canvas id="stars"></canvas>
+
+<div class="page">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-vline"></div>
+    <p class="eyebrow">Solo para ti, que haces latir mi corazón</p>
+    <h1>Mi Niña<span>Hermosa</span></h1>
+    <p class="hero-sub">
+      Cada letra escondida, cada pista descifrada,<br>
+      es un pedacito del amor que guardo <em>solo para ti.</em><br>
+      Resuelve estos juegos y descubre lo que siento.
+    </p>
+    <div class="divrow">
+      <div class="divline"></div>
+      <div class="divsym">✦</div>
+      <div class="divline"></div>
+    </div>
+  </div>
+
+  <!-- CHOICE -->
+  <div class="sec" id="s-games">
+    <p class="sec-label">Para ti, con amor</p>
+    <h2 class="sec-title">Elige tu juego</h2>
+    <p class="sec-desc">Abre el que más te llame el corazón — o los dos, si te atreves.</p>
+    <div class="choice-row">
+
+      <div class="choice-card" onclick="openModal('ws')">
+        <div class="cc tl"></div><div class="cc tr"></div><div class="cc bl"></div><div class="cc br"></div>
+        <span class="choice-icon">🔍</span>
+        <div class="choice-title">Sopa de Letras</div>
+        <p class="choice-sub">Encuéntrame entre las letras.<br>Diez palabras que te describen.</p>
+        <span class="choice-badge">Abrir juego →</span>
+      </div>
+
+      <div class="choice-card" onclick="openModal('love')">
+        <div class="cc tl"></div><div class="cc tr"></div><div class="cc bl"></div><div class="cc br"></div>
+        <span class="choice-icon">💌</span>
+        <div class="choice-title">Un mensajito</div>
+        <p class="choice-sub">Algo que necesito<br>que sepas.</p>
+        <span class="choice-badge">Abrir →</span>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- FINALE -->
+  <div class="sec finale" id="s-fin">
+    <span class="heart-ani">♥</span>
+    <div class="finale-line"></div>
+    <p class="finale-msg">
+      Si encontraste cada palabra y resolviste cada pista,<br>
+      entonces ya sabes lo que llevo escrito en el alma.<br><br>
+      Eres <em>hermosa</em>, eres <em>brillante</em>, eres <em>mi mundo</em>.<br>
+      Cada momento contigo es el más bonito de mi vida,<br>
+      y no hay letras suficientes en ninguna sopa<br>
+      para contener todo lo que te quiero.
+    </p>
+    <div class="finale-sig">
+      <small>De mi para ti, con amor.</small>
+      Mi niña ♥
+    </div>
+  </div>
+
+</div>
+
+<!-- MODAL SOPA -->
+<div class="modal-overlay" id="modal-ws">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal('ws')">✕</button>
+    <div class="modal-title">Sopa de Letras</div>
+    <div class="modal-desc">Busca las diez palabras. Arrastra para seleccionar.</div>
+    <div class="prog-row"><div class="prog-bar"><div class="prog-fill" id="wp"></div></div><div class="prog-txt" id="wt">0 / 10</div></div>
+    <div class="ws-grid-wrap" id="wsg"></div>
+    <div class="ws-words-wrap" id="wsw"></div>
+  </div>
+</div>
+
+<!-- MODAL AMOR -->
+<div class="modal-overlay" id="modal-love">
+  <div class="modal-box" style="text-align:center;padding:48px 30px 40px">
+    <button class="modal-close" onclick="closeModal('love')">✕</button>
+    <div class="love-msg-wrap">
+      <div class="love-te-amo">TE AMOOOOOO</div>
+      <div class="love-hearts">♥ ♥ ♥</div>
+      <svg class="snoopy-svg" viewBox="0 0 240 280" xmlns="http://www.w3.org/2000/svg">
+        <!-- Shadow -->
+        <ellipse cx="120" cy="272" rx="45" ry="7" fill="rgba(0,0,0,0.18)"/>
+        <!-- Tail -->
+        <path d="M152 200 Q175 185 178 165 Q181 148 168 145" stroke="#f0ece6" stroke-width="7" fill="none" stroke-linecap="round"/>
+        <!-- Body -->
+        <ellipse cx="112" cy="205" rx="48" ry="55" fill="#f0ece6"/>
+        <!-- Tummy patch -->
+        <ellipse cx="112" cy="215" rx="28" ry="32" fill="white"/>
+        <!-- Black saddle -->
+        <path d="M68 185 Q80 165 112 162 Q144 162 156 182 Q148 195 112 197 Q76 197 68 185Z" fill="#1a1a1a"/>
+        <!-- Left leg -->
+        <path d="M82 248 Q78 260 72 265" stroke="#f0ece6" stroke-width="13" fill="none" stroke-linecap="round"/>
+        <!-- Right leg -->
+        <path d="M138 248 Q142 260 148 265" stroke="#f0ece6" stroke-width="13" fill="none" stroke-linecap="round"/>
+        <!-- Left foot -->
+        <ellipse cx="70" cy="267" rx="18" ry="9" fill="#1a1a1a"/>
+        <!-- Right foot -->
+        <ellipse cx="150" cy="267" rx="18" ry="9" fill="#1a1a1a"/>
+        <!-- Left arm down -->
+        <path d="M72 200 Q58 215 55 230" stroke="#f0ece6" stroke-width="12" fill="none" stroke-linecap="round"/>
+        <!-- Right arm waving up -->
+        <path d="M150 195 Q168 175 172 155" stroke="#f0ece6" stroke-width="12" fill="none" stroke-linecap="round"/>
+        <!-- Right hand -->
+        <circle cx="173" cy="150" r="12" fill="#f0ece6"/>
+        <!-- Left ear hanging -->
+        <path d="M80 95 Q60 110 58 138 Q57 155 68 158" stroke="#1a1a1a" stroke-width="22" fill="none" stroke-linecap="round"/>
+        <!-- Right ear hanging -->
+        <path d="M148 95 Q168 110 170 138 Q171 155 160 158" stroke="#1a1a1a" stroke-width="22" fill="none" stroke-linecap="round"/>
+        <!-- Neck -->
+        <rect x="100" y="150" width="28" height="20" rx="8" fill="#f0ece6"/>
+        <!-- Head -->
+        <ellipse cx="116" cy="105" rx="52" ry="55" fill="#f0ece6"/>
+        <!-- Snout area -->
+        <ellipse cx="130" cy="122" rx="28" ry="20" fill="#e8ddd0"/>
+        <!-- Nose -->
+        <ellipse cx="130" cy="112" rx="10" ry="7" fill="#1a1a1a"/>
+        <!-- Nostril left -->
+        <ellipse cx="125" cy="114" rx="2.5" ry="1.5" fill="#3a2a2a"/>
+        <!-- Nostril right -->
+        <ellipse cx="135" cy="114" rx="2.5" ry="1.5" fill="#3a2a2a"/>
+        <!-- Mouth -->
+        <path d="M118 128 Q130 138 142 128" stroke="#1a1a1a" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+        <!-- Mouth line up -->
+        <path d="M130 120 L130 128" stroke="#1a1a1a" stroke-width="2" stroke-linecap="round"/>
+        <!-- Left eye open -->
+        <ellipse cx="100" cy="98" rx="9" ry="10" fill="white"/>
+        <circle cx="101" cy="99" r="6" fill="#1a1a1a"/>
+        <circle cx="103" cy="96" r="2" fill="white"/>
+        <!-- Right eye WINKING -->
+        <path d="M124 96 Q133 90 142 96" stroke="#1a1a1a" stroke-width="3" fill="none" stroke-linecap="round"/>
+        <path d="M125 98 Q133 93 141 98" stroke="#1a1a1a" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+        <!-- Cheek blush -->
+        <ellipse cx="148" cy="112" rx="9" ry="5" fill="rgba(220,120,140,0.3)"/>
+        <!-- Heart floating from hand -->
+        <path d="M183 130 C183 126 187 124 190 127 C193 124 197 126 197 130 C197 135 190 141 190 141 C190 141 183 135 183 130Z" fill="#c25470"/>
+        <!-- Small heart 2 -->
+        <path d="M195 118 C195 116 197 115 199 117 C201 115 203 116 203 118 C203 121 199 124 199 124 C199 124 195 121 195 118Z" fill="#e0809a" opacity="0.8"/>
+      </svg>
+      <p class="love-sub">y eso nunca va a cambiar 🐾</p>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+// STARS
+const cv=document.getElementById('stars'),cx=cv.getContext('2d');let stars=[];
+function initStars(){cv.width=innerWidth;cv.height=innerHeight;stars=Array.from({length:140},()=>({x:Math.random()*cv.width,y:Math.random()*cv.height,r:Math.random()*1.3+.3,a:Math.random()*.5+.05,da:Math.random()*.006+.002,up:Math.random()>.5}))}
+function drawStars(){cx.clearRect(0,0,cv.width,cv.height);stars.forEach(s=>{s.a+=s.up?s.da:-s.da;if(s.a>.6||s.a<.04)s.up=!s.up;cx.beginPath();cx.arc(s.x,s.y,s.r,0,Math.PI*2);cx.fillStyle=`rgba(255,255,255,${s.a.toFixed(2)})`;cx.fill()});requestAnimationFrame(drawStars)}
+initStars();drawStars();window.addEventListener('resize',initStars);
+
+// OBSERVER
+const obs=new IntersectionObserver(e=>e.forEach(x=>{if(x.isIntersecting)x.target.classList.add('vis')}),{threshold:.08});
+document.querySelectorAll('.sec').forEach(e=>obs.observe(e));
+
+// TOAST
+function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2800)}
+
+// MODAL
+function openModal(id){document.getElementById('modal-'+id).classList.add('open');document.body.style.overflow='hidden';if(id==='ws'&&!wsBuilt)buildWS();}
+function closeModal(id){document.getElementById('modal-'+id).classList.remove('open');document.body.style.overflow=''}
+document.querySelectorAll('.modal-overlay').forEach(m=>m.addEventListener('click',e=>{if(e.target===m){closeModal(m.id.replace('modal-',''))}}));
+
+// WORD SEARCH
+const WS_WORDS=['HERMOSA','ENCANTADORA','UNICA','PRINCESA','REINA','BRILLANTE','NEGRA','FASCINANTE','BONITA','MIMUJER','ATELOGO'];
+const GSZ=18;
+let grid=Array.from({length:GSZ},()=>Array(GSZ).fill(''));
+let wsBuilt=false,wsSel=[],wsDrag=false,wsFound=new Set();
+const DIRS=[[0,1],[1,0],[0,-1],[-1,0],[1,1],[1,-1],[-1,1],[-1,-1]];
+const ABC='ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+
+function placeWord(w){
+  for(let t=0;t<300;t++){
+    const d=DIRS[Math.floor(Math.random()*DIRS.length)];
+    const r=Math.floor(Math.random()*GSZ),c=Math.floor(Math.random()*GSZ);
+    let ok=true;
+    for(let i=0;i<w.length;i++){const nr=r+d[0]*i,nc=c+d[1]*i;if(nr<0||nr>=GSZ||nc<0||nc>=GSZ){ok=false;break}if(grid[nr][nc]&&grid[nr][nc]!==w[i]){ok=false;break}}
+    if(ok){for(let i=0;i<w.length;i++){const nr=r+d[0]*i,nc=c+d[1]*i;grid[nr][nc]=w[i]}return}
+  }
+}
+
+function buildWS(){
+  wsBuilt=true;
+  WS_WORDS.forEach(w=>placeWord(w));
+  for(let r=0;r<GSZ;r++)for(let c=0;c<GSZ;c++)if(!grid[r][c])grid[r][c]=ABC[Math.floor(Math.random()*26)];
+  const wsgEl=document.getElementById('wsg'),wswEl=document.getElementById('wsw');
+  WS_WORDS.forEach(w=>{const s=document.createElement('span');s.className='ws-word-chip';s.id='wc-'+w;s.textContent=w;wswEl.appendChild(s)});
+  for(let r=0;r<GSZ;r++){
+    const row=document.createElement('div');row.className='ws-row-g';
+    for(let c=0;c<GSZ;c++){
+      const cell=document.createElement('div');cell.className='ws-cell';
+      cell.textContent=grid[r][c];cell.dataset.r=r;cell.dataset.c=c;
+      row.appendChild(cell);
+    }
+    wsgEl.appendChild(row);
+  }
+  const wsgEl2=document.getElementById('wsg');
+  wsgEl2.addEventListener('mousedown',wsStart);
+  wsgEl2.addEventListener('mouseover',wsOver);
+  document.addEventListener('mouseup',wsEnd);
+  wsgEl2.addEventListener('touchstart',e=>{e.preventDefault();wsStart({target:document.elementFromPoint(e.touches[0].clientX,e.touches[0].clientY)})},{passive:false});
+  wsgEl2.addEventListener('touchmove',e=>{e.preventDefault();const el=document.elementFromPoint(e.touches[0].clientX,e.touches[0].clientY);if(el)wsOver({target:el})},{passive:false});
+  wsgEl2.addEventListener('touchend',e=>{e.preventDefault();wsEnd()},{passive:false});
+}
+
+function wsStart(e){wsDrag=true;wsSel=[];const el=e.target;if(el&&el.classList.contains('ws-cell'))wsAdd(el)}
+function wsOver(e){if(!wsDrag)return;const el=e.target;if(el&&el.classList.contains('ws-cell'))wsAdd(el)}
+function wsAdd(el){const key=el.dataset.r+'-'+el.dataset.c;if(!wsSel.find(x=>x.key===key)){wsSel.push({key,r:+el.dataset.r,c:+el.dataset.c,el});el.classList.add('sel')}}
+function wsEnd(){
+  if(!wsDrag)return;wsDrag=false;
+  const word=wsSel.map(x=>grid[x.r][x.c]).join('');
+  const rev=word.split('').reverse().join('');
+  const match=WS_WORDS.find(w=>w===word||w===rev);
+  if(match&&!wsFound.has(match)){
+    wsFound.add(match);
+    const ci=WS_WORDS.indexOf(match);
+    wsSel.forEach(x=>{x.el.classList.remove('sel');x.el.classList.add('f'+ci)});
+    document.getElementById('wc-'+match).classList.add('found');
+    toast('✦ ¡Encontraste «'+match+'»! ♥');
+    const pct=wsFound.size/WS_WORDS.length*100;
+    document.getElementById('wp').style.width=pct+'%';
+    document.getElementById('wt').textContent=wsFound.size+' / '+WS_WORDS.length;
+    if(wsFound.size===WS_WORDS.length)setTimeout(()=>toast('🌹 ¡Sopa completa! Eres increíble.'),900);
+  } else {
+    wsSel.forEach(x=>{if(!x.el.className.match(/f\d/))x.el.classList.remove('sel')});
+  }
+  wsSel=[];
+}
+</script>
+</body>
+</html>
